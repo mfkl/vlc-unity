@@ -122,6 +122,7 @@ void RenderAPI_D3D11::setVlcContext(libvlc_media_player_t *mp)
                                     this);
 }
 
+
 void RenderAPI_D3D11::ProcessDeviceEvent(UnityGfxDeviceEventType type, IUnityInterfaces* interfaces)
 {
     DEBUG("Entering ProcessDeviceEvent \n");
@@ -170,6 +171,8 @@ void RenderAPI_D3D11::ProcessDeviceEvent(UnityGfxDeviceEventType type, IUnityInt
 
 void RenderAPI_D3D11::Update(UINT width, UINT height)
 {
+    DEBUG("RenderAPI_D3D11::Update \n");
+
     DXGI_FORMAT renderFormat = DXGI_FORMAT_R8G8B8A8_UNORM;
     HRESULT hr;
     DEBUG("start releasing d3d objects.\n");
@@ -416,12 +419,15 @@ bool RenderAPI_D3D11::UpdateOutput( const libvlc_video_direct3d_cfg_t *cfg, libv
 
 void RenderAPI_D3D11::Swap()
 {
+    DEBUG("Entering Swap.\n");
     m_d3dctxVLC->Flush();
     m_updated = true;
 }
 
 bool RenderAPI_D3D11::StartRendering( bool enter, const libvlc_video_direct3d_hdr10_metadata_t *hdr10 )
 {
+    DEBUG("Entering StartRendering.\n");
+
     if ( enter )
     {
         EnterCriticalSection(&m_outputLock);
@@ -438,6 +444,8 @@ bool RenderAPI_D3D11::StartRendering( bool enter, const libvlc_video_direct3d_hd
 
 bool RenderAPI_D3D11::SelectPlane( size_t plane )
 {
+    DEBUG("Entering SelectPlane.\n");
+
     if ( plane != 0 ) // we only support one packed RGBA plane (DXGI_FORMAT_R8G8B8A8_UNORM)
         return false;
     m_d3dctxVLC->OMSetRenderTargets( 1, &m_textureRenderTarget, NULL );
@@ -446,14 +454,44 @@ bool RenderAPI_D3D11::SelectPlane( size_t plane )
 
 bool RenderAPI_D3D11::Setup( const libvlc_video_direct3d_device_cfg_t *cfg, libvlc_video_direct3d_device_setup_t *out )
 {
-    DEBUG("Setup m_d3dctxVLC = %p this = %p", m_d3dctxVLC, this);
+    DEBUG("Setup m_d3dctxVLC = %p this = %p \n", m_d3dctxVLC, this);
+    ULONG refcount = m_d3dctxVLC->AddRef();
+    DEBUG("refcount %lu \n", refcount - 1);
+    m_d3dctxVLC->Release();
     out->device_context = m_d3dctxVLC;
     return true;
 }
 
 void RenderAPI_D3D11::Cleanup()
 {
-    // here we can release all things Direct3D11 for good (if playing only one file)
+    DEBUG("RenderAPI_D3D11::Cleanup \n");
+
+    // if (m_textureUnity)
+    // {
+    //     m_textureUnity->Release();
+    //     m_textureUnity = NULL;
+    // }
+    // if (m_textureShaderInput)
+    // {
+    //     m_textureShaderInput->Release();
+    //     m_textureShaderInput = NULL;
+    // }
+    // if (m_textureRenderTarget)
+    // {
+    //     m_textureRenderTarget->Release();
+    //     m_textureRenderTarget = NULL;
+    // }
+    // if(m_outputTexture)
+    // {
+    //     m_outputTexture->Release();
+    //     m_outputTexture = nullptr;
+    // }
+
+    // if(m_sharedHandle)
+    // {
+    //     CloseHandle(m_sharedHandle);
+    //     m_sharedHandle = nullptr;
+    // }
 }
 
 void RenderAPI_D3D11::Resize(void (*report_size_change)(void *report_opaque, unsigned width, unsigned height),

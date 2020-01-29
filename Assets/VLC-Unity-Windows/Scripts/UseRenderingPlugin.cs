@@ -2,22 +2,28 @@ using UnityEngine;
 using System;
 using System.Collections;
 using LibVLCSharp.Shared;
-
+using System.Runtime.InteropServices;
+ 
 public class UseRenderingPlugin : MonoBehaviour
 {
     LibVLC _libVLC;
     MediaPlayer _mediaPlayer;
     const int seekTimeDelta = 2000;
     Texture2D tex = null;
+    Renderer renderer;
+
+    [DllImport("VLCUnityPlugin")]
+    internal static extern void Print(string toPrint);
 
     void Awake()
     {
         Core.Initialize(Application.dataPath);
 
-        _libVLC = new LibVLC("--no-osd","--verbose=2");
+        _libVLC = new LibVLC("--no-osd");
 
+        renderer = GetComponent<Renderer>();
         _mediaPlayer = new MediaPlayer(_libVLC);
-
+        
         StartCoroutine("CallPluginAtEndOfFrames");
 
         PlayPause();
@@ -37,6 +43,8 @@ public class UseRenderingPlugin : MonoBehaviour
 
     void OnDisable() 
     {
+        Print("yolo: On disable \n");
+
         _mediaPlayer?.Stop();
         _mediaPlayer?.Dispose();
         _mediaPlayer = null;
@@ -67,7 +75,8 @@ public class UseRenderingPlugin : MonoBehaviour
     public void Stop ()
     {
         Debug.Log ("[VLC] Stopping Player !");
-
+        Print("yolo: Stop button pressed \n");
+        
         _mediaPlayer?.Stop();
         tex = null;
         GetComponent<Renderer>().material.mainTexture = null;
@@ -84,9 +93,15 @@ public class UseRenderingPlugin : MonoBehaviour
             // Wait until all frame rendering is done
             yield return new WaitForEndOfFrame();
 
+            if(!_mediaPlayer.IsPlaying)
+            {
+                tex = null;
+                GetComponent<Renderer>().material.mainTexture = null;
+            }
             // We may not receive video size the first time           
             if (tex == null)
             {
+                Print("yolo: tex is null \n");
                 // If received size is not null, it and scale the texture
                 uint i_videoHeight = 0;
                 uint i_videoWidth = 0;
@@ -95,6 +110,7 @@ public class UseRenderingPlugin : MonoBehaviour
                 IntPtr texptr = _mediaPlayer.GetTexture(out bool updated);
                 if (i_videoWidth != 0 && i_videoHeight != 0 && updated && texptr != IntPtr.Zero)
                 {
+                    Print("yolo: Creating texture with height " + i_videoHeight + " and width " + i_videoWidth + "\n");
                     Debug.Log("Creating texture with height " + i_videoHeight + " and width " + i_videoWidth);
                     tex = Texture2D.CreateExternalTexture((int)i_videoWidth,
                         (int)i_videoHeight,
@@ -106,13 +122,22 @@ public class UseRenderingPlugin : MonoBehaviour
                     tex.Apply();
                     GetComponent<Renderer>().material.mainTexture = tex;
                 }
+                else
+                {
+                    Print("yolo: Not creating texture \n");
+                }
             }
             else if (tex != null)
             {
                 IntPtr texptr = _mediaPlayer.GetTexture(out bool updated);
                 if (updated)
                 {
+                    Print("yolo: updating texture \n");
                     tex.UpdateExternalTexture(texptr);
+                }
+                else
+                {
+                    Print("yolo: not updating texture \n");
                 }
             }
         }
