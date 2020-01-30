@@ -41,6 +41,17 @@ extern "C" void UNITY_INTERFACE_EXPORT UNITY_INTERFACE_API Print(char* toPrint)
     DEBUG("%s", toPrint);
 }
 
+extern "C" libvlc_instance_t* UNITY_INTERFACE_EXPORT UNITY_INTERFACE_API
+CreateLibVLCUnity(int argc, const char *const *argv)
+{
+    #if TRIAL
+    strcat(argv, "--sub-source=marq{marquee=Videolabs}");
+    argc++;
+    #endif
+
+    return libvlc_new(argc, argv);
+}
+
 extern "C" libvlc_media_player_t* UNITY_INTERFACE_EXPORT UNITY_INTERFACE_API
 CreateAndInitMediaPlayer(libvlc_instance_t* libvlc)
 {
@@ -103,6 +114,7 @@ err:
     }    
     return NULL;
 }
+
 
 extern "C" void* UNITY_INTERFACE_EXPORT UNITY_INTERFACE_API
 getTexture(libvlc_media_player_t* mp, bool * updated)
