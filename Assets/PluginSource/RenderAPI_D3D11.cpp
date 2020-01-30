@@ -466,32 +466,35 @@ void RenderAPI_D3D11::Cleanup()
 {
     DEBUG("RenderAPI_D3D11::Cleanup \n");
 
-    // if (m_textureUnity)
-    // {
-    //     m_textureUnity->Release();
-    //     m_textureUnity = NULL;
-    // }
-    // if (m_textureShaderInput)
-    // {
-    //     m_textureShaderInput->Release();
-    //     m_textureShaderInput = NULL;
-    // }
-    // if (m_textureRenderTarget)
-    // {
-    //     m_textureRenderTarget->Release();
-    //     m_textureRenderTarget = NULL;
-    // }
-    // if(m_outputTexture)
-    // {
-    //     m_outputTexture->Release();
-    //     m_outputTexture = nullptr;
-    // }
+	if (m_textureRenderTarget)
+	{
+		m_textureRenderTarget->Release();
+		m_textureRenderTarget = nullptr;
+	}
 
-    // if(m_sharedHandle)
-    // {
-    //     CloseHandle(m_sharedHandle);
-    //     m_sharedHandle = nullptr;
-    // }
+	if (m_textureShaderInput)
+	{
+		m_textureShaderInput->Release();
+		m_textureShaderInput = nullptr;
+	}
+
+	if (m_textureUnity)
+	{
+		m_textureUnity->Release();
+		m_textureUnity = nullptr;
+	}
+
+	if (m_outputTexture)
+	{
+		m_outputTexture->Release();
+		m_outputTexture = nullptr;
+	}
+
+	if (m_sharedHandle)
+	{
+		CloseHandle(m_sharedHandle);
+		m_sharedHandle = nullptr;
+	}
 }
 
 void RenderAPI_D3D11::Resize(void (*report_size_change)(void *report_opaque, unsigned width, unsigned height),
