@@ -18,7 +18,7 @@ public class UseRenderingPlugin : MonoBehaviour
 
         _mediaPlayer = new MediaPlayer(_libVLC);
 
-        StartCoroutine("CallPluginAtEndOfFrames");
+        // StartCoroutine("CallPluginAtEndOfFrames");
 
         PlayPause();
     }
@@ -55,6 +55,7 @@ public class UseRenderingPlugin : MonoBehaviour
         }
         else
         {
+            playing = true;
             if(_mediaPlayer.Media == null)
             {
                 _mediaPlayer.Media = new Media(_libVLC, "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4", FromType.FromLocation);
@@ -64,56 +65,56 @@ public class UseRenderingPlugin : MonoBehaviour
         }
     }
 
+    bool playing;
+
     public void Stop ()
     {
         Debug.Log ("[VLC] Stopping Player !");
-
-        _mediaPlayer?.Stop();
-        tex = null;
-        GetComponent<Renderer>().material.mainTexture = null;
+        playing = false;
+        _mediaPlayer?.Stop();        
+        var renderer = GetComponent<Renderer>();
+        foreach(var m in renderer.materials)
+        {
+            m.mainTexture = null;
+        }
     }
 
     void Start()
     {
     }
 
-    private IEnumerator CallPluginAtEndOfFrames()
+    void Update()
     {
-        while (true)
+        if(!playing)
         {
-            // Wait until all frame rendering is done
-            yield return new WaitForEndOfFrame();
 
-            // We may not receive video size the first time           
-            if (tex == null)
+        }
+        else if(GetComponent<Renderer>().material.mainTexture == null && playing)
+        {
+            // If received size is not null, it and scale the texture
+            uint i_videoHeight = 0;
+            uint i_videoWidth = 0;
+
+            _mediaPlayer.Size(0, ref i_videoWidth, ref i_videoHeight);
+            IntPtr texptr = _mediaPlayer.GetTexture(out bool updated);
+            if (i_videoWidth != 0 && i_videoHeight != 0 && updated && texptr != IntPtr.Zero)
             {
-                // If received size is not null, it and scale the texture
-                uint i_videoHeight = 0;
-                uint i_videoWidth = 0;
-
-                _mediaPlayer.Size(0, ref i_videoWidth, ref i_videoHeight);
-                IntPtr texptr = _mediaPlayer.GetTexture(out bool updated);
-                if (i_videoWidth != 0 && i_videoHeight != 0 && updated && texptr != IntPtr.Zero)
-                {
-                    Debug.Log("Creating texture with height " + i_videoHeight + " and width " + i_videoWidth);
-                    tex = Texture2D.CreateExternalTexture((int)i_videoWidth,
-                        (int)i_videoHeight,
-                        TextureFormat.RGBA32,
-                        false,
-                        true,
-                        texptr);
-                    tex.filterMode = FilterMode.Point;
-                    tex.Apply();
-                    GetComponent<Renderer>().material.mainTexture = tex;
-                }
+                Debug.Log("Creating texture with height " + i_videoHeight + " and width " + i_videoWidth);
+                tex = Texture2D.CreateExternalTexture((int)i_videoWidth,
+                    (int)i_videoHeight,
+                    TextureFormat.RGBA32,
+                    false,
+                    true,
+                    texptr);
+                GetComponent<Renderer>().material.SetTexture("_MainTex", tex);
             }
-            else if (tex != null)
+        }
+        else if (tex != null && playing)
+        {
+            IntPtr texptr = _mediaPlayer.GetTexture(out bool updated);
+            if (updated)
             {
-                IntPtr texptr = _mediaPlayer.GetTexture(out bool updated);
-                if (updated)
-                {
-                    tex.UpdateExternalTexture(texptr);
-                }
+                tex.UpdateExternalTexture(texptr);
             }
         }
     }
