@@ -9,6 +9,7 @@ public class UseRenderingPlugin : MonoBehaviour
     MediaPlayer _mediaPlayer;
     const int seekTimeDelta = 2000;
     Texture2D tex = null;
+    bool playing;
 
     void Awake()
     {
@@ -18,20 +19,20 @@ public class UseRenderingPlugin : MonoBehaviour
 
         _mediaPlayer = new MediaPlayer(_libVLC);
 
-        // StartCoroutine("CallPluginAtEndOfFrames");
-
         PlayPause();
     }
 
     public void SeekForward()
     {
         Debug.Log("[VLC] Seeking forward !");
+
         _mediaPlayer.Time += seekTimeDelta;
     }
 
     public void SeekBackward()
     {
         Debug.Log("[VLC] Seeking backward !");
+
         _mediaPlayer.Time -= seekTimeDelta;
     }
 
@@ -48,6 +49,7 @@ public class UseRenderingPlugin : MonoBehaviour
     public void PlayPause()
     {
         Debug.Log ("[VLC] Toggling Play Pause !");
+
         if (_mediaPlayer == null) return;
         if (_mediaPlayer.IsPlaying)
         {
@@ -65,38 +67,24 @@ public class UseRenderingPlugin : MonoBehaviour
         }
     }
 
-    bool playing;
-
     public void Stop ()
     {
         Debug.Log ("[VLC] Stopping Player !");
+        
         playing = false;
         _mediaPlayer?.Stop();        
-        var renderer = GetComponent<Renderer>();
-        foreach(var m in renderer.materials)
-        {
-            m.mainTexture = null;
-        }
-    }
-
-    void Start()
-    {
+        GetComponent<Renderer>().material.mainTexture = null;
     }
 
     void Update()
     {
-        if(!playing)
+        if(GetComponent<Renderer>().material.mainTexture == null && playing)
         {
-
-        }
-        else if(GetComponent<Renderer>().material.mainTexture == null && playing)
-        {
-            // If received size is not null, it and scale the texture
             uint i_videoHeight = 0;
             uint i_videoWidth = 0;
 
             _mediaPlayer.Size(0, ref i_videoWidth, ref i_videoHeight);
-            IntPtr texptr = _mediaPlayer.GetTexture(out bool updated);
+            var texptr = _mediaPlayer.GetTexture(out bool updated);
             if (i_videoWidth != 0 && i_videoHeight != 0 && updated && texptr != IntPtr.Zero)
             {
                 Debug.Log("Creating texture with height " + i_videoHeight + " and width " + i_videoWidth);
@@ -111,7 +99,7 @@ public class UseRenderingPlugin : MonoBehaviour
         }
         else if (tex != null && playing)
         {
-            IntPtr texptr = _mediaPlayer.GetTexture(out bool updated);
+            var texptr = _mediaPlayer.GetTexture(out bool updated);
             if (updated)
             {
                 tex.UpdateExternalTexture(texptr);
