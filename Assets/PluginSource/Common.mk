@@ -1,6 +1,10 @@
 TARGET = VLCUnityPlugin
 
+ifeq ($(PLATFORM), win)
 SRCS = RenderingPlugin.cpp RenderAPI.cpp RenderAPI_D3D11.cpp Log.cpp
+else
+SRCS = RenderingPlugin.cpp RenderAPI.cpp RenderAPI_Android.cpp RenderAPI_OpenGLBase.cpp RenderAPI_OpenGLEGL.cpp Log.cpp
+endif
 
 OBJS = $(SRCS:.cpp=.o)
 
@@ -13,7 +17,11 @@ LIB=/mnt/d/vlc-4.0.0-dev-x86/sdk/lib
 endif
 LDFLAGS = -static-libgcc -static-libstdc++ -shared -Wl,-pdb= -L$(LIB)
 
+ifeq ($(PLATFORM), win)
 LIBS = -lvlc -ld3d11 -ld3dcompiler_47 -ldxgi
+else
+LIBS = -lvlc
+endif
 
 ifeq ($(ARCH), x86_64)
 BIN_PREFIX = x86_64-w64-mingw32
