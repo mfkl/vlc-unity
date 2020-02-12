@@ -38,11 +38,11 @@ void* RenderAPI_OpenEGL::get_proc_address(void* /*data*/, const char* procname)
 void RenderAPI_OpenEGL::setVlcContext(libvlc_media_player_t *mp)
 {
     DEBUG("[EGL] setVlcContext %p", this);
-    libvlc_video_set_opengl_callbacks(mp,
-        libvlc_gl_engine_gles2,
-        setup, cleanup, resize, swap,
-        make_current, get_proc_address,
-        this);
+    libvlc_video_set_output_callbacks(mp,
+        libvlc_video_engine_gles2,
+        setup, cleanup, resize, update_output, swap, 
+        make_current, get_proc_address, frameMetadata,
+        output_select_plane, this);
 }
 
 EGLContext current_ctx;

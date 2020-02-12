@@ -29,11 +29,13 @@ public:
 
     virtual void setVlcContext(libvlc_media_player_t *mp) override = 0 ;
 
-    static bool setup(void* data) ;
-    static void cleanup(void* data);
-    static void resize(void* data, unsigned width, unsigned height);
-    static void swap(void* data);
-
+    static bool setup(void **opaque, const libvlc_video_setup_device_cfg_t *cfg, libvlc_video_setup_device_info_t *out);
+    static void cleanup(void* opaque);
+    static void resize(void *opaque, void (*report_size_change)(void *report_opaque, unsigned width, unsigned height), void *report_opaque);
+    static bool update_output(void* opaque, const libvlc_video_render_cfg_t *cfg, libvlc_video_output_cfg_t *output);
+    static void swap(void* opaque);
+    static void frameMetadata(void* opaque, libvlc_video_metadata_type_t type, const void *metadata);
+    static bool output_select_plane(void *opaque, size_t plane);
 
 	virtual void ProcessDeviceEvent(UnityGfxDeviceEventType type, IUnityInterfaces* interfaces) override = 0;
 
