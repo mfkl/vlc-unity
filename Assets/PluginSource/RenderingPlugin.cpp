@@ -3,7 +3,10 @@
 #include "Log.h"
 
 #include <map>
+
+#if _WIN32
 #include <windows.h>
+#endif
 
 extern "C" {
 #include <stdlib.h>
@@ -27,13 +30,16 @@ static IUnityInterfaces* s_UnityInterfaces = NULL;
  * UNITY_INTERFACE_EXPORT and UNITY_INTERFACE_API
  */
 
+//TODO: Move this down to platform implementations.
 extern "C" void UNITY_INTERFACE_EXPORT UNITY_INTERFACE_API SetPluginPath(char* path)
 {
     DEBUG("SetPluginPath \n");
+#if _WIN32
     auto e = _putenv_s("VLC_PLUGIN_PATH", path);
     if(e != 0)
         DEBUG("_putenv_s failed");
     else DEBUG("_putenv_s succeeded");
+#endif
 }
 
 extern "C" void UNITY_INTERFACE_EXPORT UNITY_INTERFACE_API Print(char* toPrint)
