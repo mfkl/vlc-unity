@@ -23,11 +23,9 @@ else
 LIBS = -lvlc -llibdl
 endif
 
-ifeq ($(ARCH), x86_64)
+ifeq ($(PLATFORM), win)
 BIN_PREFIX = x86_64-w64-mingw32
-COMPILEFLAG = m64
-else
-
+COMPILEFLAG = -m64
 endif
 
 OUTPUT = $(TARGET).dll
@@ -50,4 +48,4 @@ $(OUTPUT): $(OBJS)
 	$(CXX) $(LDFLAGS) -o $(OUTPUT) $(OBJS) $(LIBS)
 
 .cpp.o:
-	$(CXX) $(CXXFLAGS) -$(COMPILEFLAG) -c -o $@ $<
+	$(CXX) $(CXXFLAGS) $(COMPILEFLAG) -c -o $@ $<
