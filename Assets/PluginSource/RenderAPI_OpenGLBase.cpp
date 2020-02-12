@@ -16,18 +16,20 @@ RenderAPI_OpenGLBase::RenderAPI_OpenGLBase(UnityGfxRenderer apiType)
 }
 
 
-bool RenderAPI_OpenGLBase::setup(void* data)
+bool RenderAPI_OpenGLBase::setup(void **opaque,
+                                      const libvlc_video_setup_device_cfg_t *cfg,
+                                      libvlc_video_setup_device_info_t *out)
 {
-    RenderAPI_OpenGLBase* that = static_cast<RenderAPI_OpenGLBase*>(data);
+    RenderAPI_OpenGLBase* that = static_cast<RenderAPI_OpenGLBase*>(opaque);
     that->width = 0;
     that->height = 0;
     return true;
 }
 
-void RenderAPI_OpenGLBase::cleanup(void* data)
+void RenderAPI_OpenGLBase::cleanup(void* opaque)
 {
     DEBUG("destroy_fbo");
-    RenderAPI_OpenGLBase* that = reinterpret_cast<RenderAPI_OpenGLBase*>(data);
+    RenderAPI_OpenGLBase* that = reinterpret_cast<RenderAPI_OpenGLBase*>(opaque);
     if (that->width == 0 && that->height == 0)
         return;
 
@@ -36,10 +38,10 @@ void RenderAPI_OpenGLBase::cleanup(void* data)
 }
 
 
-void RenderAPI_OpenGLBase::resize(void* data, unsigned width, unsigned height)
+void RenderAPI_OpenGLBase::resize(void *opaque, void (*report_size_change)(void *report_opaque, unsigned width, unsigned height), void *report_opaque)
 {
-    DEBUG("create_fbo %p, %lu x %lu", data, width, height);
-    RenderAPI_OpenGLBase* that = reinterpret_cast<RenderAPI_OpenGLBase*>(data);
+    DEBUG("create_fbo %p, %lu x %lu", opaque, width, height);
+    RenderAPI_OpenGLBase* that = reinterpret_cast<RenderAPI_OpenGLBase*>(opaque);
 
     if (width != that->width || height != that->height)
         cleanup(data);
@@ -76,13 +78,28 @@ void RenderAPI_OpenGLBase::resize(void* data, unsigned width, unsigned height)
     glBindFramebuffer(GL_FRAMEBUFFER, that->fbo[that->idx_render]);
 }
 
-void RenderAPI_OpenGLBase::swap(void* data)
+bool RenderAPI_OpenGLBase::update_output(void* opaque, const libvlc_video_render_cfg_t *cfg, libvlc_video_output_cfg_t *output)
 {
-    RenderAPI_OpenGLBase* that = reinterpret_cast<RenderAPI_OpenGLBase*>(data);
+
+}
+
+void RenderAPI_OpenGLBase::swap(void* opaque)
+{
+    RenderAPI_OpenGLBase* that = reinterpret_cast<RenderAPI_OpenGLBase*>(opaque);
     std::lock_guard<std::mutex> lock(that->text_lock);
     that->updated = true;
     std::swap(that->idx_swap, that->idx_render);
     glBindFramebuffer(GL_FRAMEBUFFER, that->fbo[that->idx_render]);
+}
+
+void RenderAPI_OpenGLBase::frameMetadata(void* opaque, libvlc_video_metadata_type_t type, const void *metadata)
+{
+
+}
+
+bool RenderAPI_OpenGLBase::output_select_plane(void *opaque, size_t plane)
+{
+
 }
 
 void* RenderAPI_OpenGLBase::getVideoFrame(bool* out_updated)
