@@ -10,10 +10,10 @@ OBJS = $(SRCS:.cpp=.o)
 
 CXXFLAGS = -O2 -fPIC -fdebug-prefix-map='/mnt/c/'='c:/' -Wall -I./include/ -I/usr/lib/jvm/default-java/include/ -I/usr/lib/jvm/default-java/include/linux/
 
-ifeq ($(ARCH), x86_64)
+ifeq ($(PLATFORM), win)
 LIB=/mnt/d/vlc-4.0.0-dev/sdk/lib
 else
-LIB=/mnt/d/vlc-4.0.0-dev-x86/sdk/lib
+LIB=/mnt/c/Users/Martin/Projects/vlc-unity
 endif
 LDFLAGS = -static-libgcc -static-libstdc++ -shared -Wl,-pdb= -L$(LIB)
 
