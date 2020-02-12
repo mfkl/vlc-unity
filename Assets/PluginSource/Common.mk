@@ -26,7 +26,7 @@ endif
 ifeq ($(PLATFORM), win)
 LIBS = -lvlc -ld3d11 -ld3dcompiler_47 -ldxgi
 else
-LIBS = -lvlc -llibdl -lGLESv2
+LIBS = -lvlc -lGLESv2 
 endif
 
 ifeq ($(PLATFORM), win)
