@@ -15,7 +15,13 @@ LIB=/mnt/d/vlc-4.0.0-dev/sdk/lib
 else
 LIB=/mnt/c/Users/Martin/Projects/vlc-unity
 endif
+
+
+ifeq ($(PLATFORM), win)
 LDFLAGS = -static-libgcc -static-libstdc++ -shared -Wl,-pdb= -L$(LIB)
+else
+LDFLAGS = -static-libgcc -static-libstdc++ -shared -L$(LIB)
+endif
 
 ifeq ($(PLATFORM), win)
 LIBS = -lvlc -ld3d11 -ld3dcompiler_47 -ldxgi
