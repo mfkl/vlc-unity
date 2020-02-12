@@ -27,13 +27,12 @@ ifeq ($(ARCH), x86_64)
 BIN_PREFIX = x86_64-w64-mingw32
 COMPILEFLAG = m64
 else
-BIN_PREFIX = i686-w64-mingw32
-COMPILEFLAG = m32
+
 endif
 
 OUTPUT = $(TARGET).dll
 
-CXX = $(BIN_PREFIX)-c++
+CXX = g++ -DUNITY_ANDROID=1
 STRIP = $(BIN_PREFIX)-strip
 
 all: $(OUTPUT)
