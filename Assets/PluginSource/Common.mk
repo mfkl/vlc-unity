@@ -28,7 +28,11 @@ BIN_PREFIX = x86_64-w64-mingw32
 COMPILEFLAG = -m64
 endif
 
+ifeq ($(PLATFORM), win)
 OUTPUT = $(TARGET).dll
+else
+OUTPUT = $(TARGET).so
+endif
 
 CXX = g++ -DUNITY_ANDROID=1
 STRIP = $(BIN_PREFIX)-strip
