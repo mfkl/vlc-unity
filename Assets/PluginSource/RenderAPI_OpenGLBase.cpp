@@ -98,14 +98,3 @@ void* RenderAPI_OpenGLBase::getVideoFrame(bool* out_updated)
     //DEBUG("get Video Frame %u", tex[idx_display]);
     return (void*)(size_t)tex[idx_display];
 }
-
-void* RenderAPI_OpenGLBase::BeginModifyTexture(void* textureHandle, int textureWidth, int textureHeight, int* outRowPitch)
-{
-    return nullptr;
-}
-
-
-void RenderAPI_OpenGLBase::EndModifyTexture(void* textureHandle, int textureWidth, int textureHeight, int rowPitch, void* dataPtr)
-{
-    return;
-}
