@@ -20,7 +20,7 @@ LDFLAGS = -static-libgcc -static-libstdc++ -shared -Wl,-pdb= -L$(LIB)
 ifeq ($(PLATFORM), win)
 LIBS = -lvlc -ld3d11 -ld3dcompiler_47 -ldxgi
 else
-LIBS = -lvlc
+LIBS = -lvlc -llibdl
 endif
 
 ifeq ($(ARCH), x86_64)
