@@ -5,6 +5,7 @@ include $(CLEAR_VARS)
 
 LOCAL_MODULE := LibVLC
 LOCAL_EXPORT_C_INCLUDES := $(SRC_DIR)/include
+# TODO: Make it work with all ABIs
 LOCAL_SRC_FILES := ../../../libvlc.so
 
 include $(PREBUILT_SHARED_LIBRARY)
