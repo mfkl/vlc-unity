@@ -17,7 +17,7 @@ jint JNI_OnLoad(JavaVM* vm, void* reserved)
     //if (vm->GetEnv(reinterpret_cast<void**>(&jni_env), JNI_VERSION_1_6) != JNI_OK) {
     //    return -1;
     //}
-    vm->AttachCurrentThread((void **)&jni_env, 0);
+    vm->AttachCurrentThread(&jni_env, 0);
 
     if ( VLCJNI_OnLoad(vm, jni_env) != 0 )
     {
