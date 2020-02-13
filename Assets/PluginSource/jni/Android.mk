@@ -3,6 +3,14 @@ SRC_DIR := ../
 
 include $(CLEAR_VARS)
 
+LOCAL_MODULE := LibVLC
+LOCAL_EXPORT_C_INCLUDES := $(SRC_DIR)/include
+LOCAL_SRC_FILES := ../../../libvlc.so
+
+include $(PREBUILT_SHARED_LIBRARY)
+
+include $(CLEAR_VARS)
+
 LOCAL_MODULE := VLCUnityPlugin
 
 LOCAL_LDLIBS := -llog
@@ -14,8 +22,7 @@ LOCAL_SRC_FILES += $(SRC_DIR)/RenderAPI_Android.cpp
 LOCAL_SRC_FILES += $(SRC_DIR)/Log.cpp
 
 # LibVLC
-LOCAL_LDLIBS += -lvlc
-LOCAL_C_INCLUDES += $(SRC_DIR)/include/vlc
+LOCAL_SHARED_LIBRARIES = LibVLC 
 
 # OpenGL ES
 LOCAL_SRC_FILES += $(SRC_DIR)/RenderAPI_OpenGLBase.cpp
