@@ -8,8 +8,8 @@ static void *handle;
 typedef jint (*JNI_OnLoad_pf)(JavaVM *, void*);
 typedef void (*JNI_OnUnload_pf)(JavaVM *, void*);
 
-extern "C" int VLCJNI_OnLoad(JavaVM *, JNIEnv*);
-extern "C" void VLCJNI_OnUnload(JavaVM *, JNIEnv *);
+// extern "C" int VLCJNI_OnLoad(JavaVM *, JNIEnv*);
+// extern "C" void VLCJNI_OnUnload(JavaVM *, JNIEnv *);
 
 
 jint JNI_OnLoad(JavaVM* vm, void* reserved)
@@ -19,11 +19,11 @@ jint JNI_OnLoad(JavaVM* vm, void* reserved)
     //}
     vm->AttachCurrentThread(&jni_env, 0);
 
-    if ( VLCJNI_OnLoad(vm, jni_env) != 0 )
-    {
-        DEBUG("VLCJNI_OnLoad failed");
-        return -1;
-    }
+    // if ( VLCJNI_OnLoad(vm, jni_env) != 0 )
+    // {
+    //     DEBUG("VLCJNI_OnLoad failed");
+    //     return -1;
+    // }
 
     handle = dlopen("libvlcjni.so", RTLD_LAZY);
     if (!handle)
@@ -61,7 +61,7 @@ void JNI_OnUnload(JavaVM *vm, void *reserved)
         DEBUG("could not find VLC JNI_OnUnload");
     dlclose(handle);
 
-    VLCJNI_OnUnload(vm, jni_env);
+    // VLCJNI_OnUnload(vm, jni_env);
 
     vm->DetachCurrentThread();
 }
