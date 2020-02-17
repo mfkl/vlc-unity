@@ -14,6 +14,9 @@ include $(CLEAR_VARS)
 
 LOCAL_MODULE := VLCUnityPlugin
 
+LOCAL_SHARED_LIBRARIES := LibVLC 
+
+
 LOCAL_LDLIBS := -llog
 LOCAL_ARM_MODE := arm
 
@@ -23,12 +26,11 @@ LOCAL_SRC_FILES += $(SRC_DIR)/RenderAPI_Android.cpp
 LOCAL_SRC_FILES += $(SRC_DIR)/Log.cpp
 
 # LibVLC
-LOCAL_SHARED_LIBRARIES = LibVLC 
 
 # OpenGL ES
 LOCAL_SRC_FILES += $(SRC_DIR)/RenderAPI_OpenGLBase.cpp
 LOCAL_SRC_FILES += $(SRC_DIR)/RenderAPI_OpenGLEGL.cpp
-LOCAL_LDLIBS += -lGLESv2 -lEGL
+LOCAL_LDLIBS += -L/mnt/c/Users/Martin/Projects/vlc-unity -lGLESv2 -lEGL -lvlc
 LOCAL_CPPFLAGS += -DSUPPORT_OPENGL_ES=1 -DUNITY_ANDROID=1
 
 # Vulkan (optional)
