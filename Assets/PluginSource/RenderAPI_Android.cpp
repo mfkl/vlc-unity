@@ -25,10 +25,10 @@ jint JNI_OnLoad(JavaVM* vm, void* reserved)
     //     return -1;
     // }
 
-    handle = dlopen("libvlcjni.so", RTLD_LAZY);
+    handle = dlopen("libvlc.so", RTLD_LAZY);
     if (!handle)
     {
-        DEBUG("could not link libvlcjni.so");
+        DEBUG("could not link libvlc.so");
         return -1;
     }
 
