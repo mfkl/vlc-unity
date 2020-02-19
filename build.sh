@@ -52,9 +52,9 @@ OUTPUT="../VLC-Unity-Windows/Plugins/$ARCH"
 ## ANDROID
 cd Assets/PluginSource/jni && /opt/android-ndk-r21/ndk-build
 cd ..
+mv ./libs/armeabi-v7a/libVLCUnityPlugin.so ../VLC-Unity-Windows/Plugins/Android/armeabi-v7a/libVLCUnityPlugin.so
+rm -rf libs
 rm -rf obj
-mv ./libs/armeabi-v7a/*.so ../VLC-Unity-Windows/Plugins/Android/armeabi-v7a/
-
 
 # cd Assets/PluginSource && make clean && make PLATFORM=$PLATFORM ARCH=$ARCH
 # mv VLCUnityPlugin.{dll,pdb,so} $OUTPUT -f
