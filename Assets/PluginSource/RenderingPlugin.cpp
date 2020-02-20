@@ -47,6 +47,8 @@ extern "C" void UNITY_INTERFACE_EXPORT UNITY_INTERFACE_API Print(char* toPrint)
     DEBUG("%s", toPrint);
 }
 
+static RenderAPI* EarlyRenderAPI = NULL;
+
 extern "C" libvlc_media_player_t* UNITY_INTERFACE_EXPORT UNITY_INTERFACE_API
 libvlc_unity_media_player_new(libvlc_instance_t* libvlc)
 {
@@ -75,22 +77,26 @@ libvlc_unity_media_player_new(libvlc_instance_t* libvlc)
         goto err;
     }
 
-    DEBUG("Calling... Initialize Render API \n");
+    if(EarlyRenderAPI == NULL) {
+        DEBUG("s_DeviceType is NULL\n");
 
-    s_DeviceType = s_Graphics->GetRenderer();
+        s_DeviceType = s_Graphics->GetRenderer();
 
-    DEBUG("Calling... CreateRenderAPI \n");
+        DEBUG("Calling... CreateRenderAPI \n");
 
-    s_CurrentAPI = CreateRenderAPI(s_DeviceType);
-    
-    if(s_CurrentAPI == NULL)
-    {
-        DEBUG("s_CurrentAPI is NULL \n");    
-    }    
-    
-    DEBUG("Calling... ProcessDeviceEvent \n");
-    
-    s_CurrentAPI->ProcessDeviceEvent(kUnityGfxDeviceEventInitialize, s_UnityInterfaces);
+        s_CurrentAPI = CreateRenderAPI(s_DeviceType);
+        
+        if(s_CurrentAPI == NULL)
+        {
+            DEBUG("s_CurrentAPI is NULL \n");    
+        }
+        
+        DEBUG("Calling... ProcessDeviceEvent \n");
+        s_CurrentAPI->ProcessDeviceEvent(kUnityGfxDeviceEventInitialize, s_UnityInterfaces);        
+    } else {
+        DEBUG("EarlyRenderAPI is NOT NULL\n");
+        s_CurrentAPI = EarlyRenderAPI;
+    }
 
     DEBUG("Calling... setVlcContext s_CurrentAPI=%p mp=%p", s_CurrentAPI, mp);
     s_CurrentAPI->setVlcContext(mp);
@@ -146,9 +152,6 @@ extern "C" void UNITY_INTERFACE_EXPORT UNITY_INTERFACE_API UnityPluginUnload()
   s_Graphics->UnregisterDeviceEventCallback(OnGraphicsDeviceEvent);
 }
 
-
-static RenderAPI* EarlyRenderAPI = NULL;
-
 static void UNITY_INTERFACE_API OnGraphicsDeviceEvent(UnityGfxDeviceEventType eventType)
 {
     // Create graphics API implementation upon initialization
@@ -166,6 +169,9 @@ static void UNITY_INTERFACE_API OnGraphicsDeviceEvent(UnityGfxDeviceEventType ev
         DEBUG("CreateRenderAPI(s_DeviceType) \n");
 
         EarlyRenderAPI = CreateRenderAPI(s_DeviceType);
+
+        EarlyRenderAPI->ProcessDeviceEvent(kUnityGfxDeviceEventInitialize, s_UnityInterfaces);        
+
         return;
     }
 
