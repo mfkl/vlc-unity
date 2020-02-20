@@ -89,9 +89,17 @@ void RenderAPI_OpenEGL::ProcessDeviceEvent(UnityGfxDeviceEventType type, IUnityI
         }
 
         if(current_ctx == NULL){
+            DEBUG("[EGL] current_ctx is NULL");
             current_ctx = eglGetCurrentContext();
+            if(current_ctx == NULL) {
+                DEBUG("[EGL] eglGetCurrentContext failed, current_ctx still NULL, error %x", eglGetError());
+                return;
+            }
         }
-
+        else {
+            DEBUG("[EGL] eglGetCurrentContext() returned context %p", current_ctx);
+        }
+        
         EGLint egl_version;
         if (!eglQueryContext(m_display, current_ctx, EGL_CONTEXT_CLIENT_VERSION, &egl_version)) {
             DEBUG("[EGL] failed to retrieve EGL_CONTEXT_CLIENT_VERSION");
@@ -103,17 +111,7 @@ void RenderAPI_OpenEGL::ProcessDeviceEvent(UnityGfxDeviceEventType type, IUnityI
             EGL_CONTEXT_CLIENT_VERSION, egl_version,
             EGL_NONE
         };
-
-        if(current_ctx == NULL) {
-            if (eglGetError() != EGL_SUCCESS) {
-                DEBUG("[EGL] eglGetCurrentContext() returned error %x", eglGetError());
-                return;
-            }
-        }
-        else {
-            DEBUG("[EGL] eglGetCurrentContext() returned context %p", current_ctx);
-        }
-
+   
         m_surface = eglCreatePbufferSurface(m_display, config, surface_attr);
         if ( m_surface == EGL_NO_SURFACE || eglGetError() != EGL_SUCCESS ) {
             DEBUG("[EGL] eglCreatePbufferSurface() returned error %x", eglGetError());
