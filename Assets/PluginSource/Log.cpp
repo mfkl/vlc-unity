@@ -3,7 +3,7 @@
 #if UNITY_WIN
 #include <windows.h>
 #elif UNITY_ANDROID
-// #include <android/log.h>
+#include <android/log.h>
 #endif
 
 extern "C"
@@ -27,7 +27,7 @@ void debugmsg( const char* fmt, ...)
     OutputDebugString(buff);
     free(buff);
 #elif UNITY_ANDROID
-    // __android_log_vprint(ANDROID_LOG_INFO, "VLCUnity", fmt, args);
+    __android_log_vprint(ANDROID_LOG_INFO, "VLC-Unity", fmt, args);
 #else
     vfprintf(stderr, fmt, args);
     vfprintf(stderr, "\n", args);
