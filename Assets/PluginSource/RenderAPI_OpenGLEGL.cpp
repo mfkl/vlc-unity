@@ -50,7 +50,7 @@ EGLContext current_ctx;
 void RenderAPI_OpenEGL::ProcessDeviceEvent(UnityGfxDeviceEventType type, IUnityInterfaces* interfaces)
 {
 	if (type == kUnityGfxDeviceEventInitialize) {
-        DEBUG("[EGL] kUnityGfxDeviceEventInitialize");
+        DEBUG("[EGL] Entering ProcessDeviceEvent with kUnityGfxDeviceEventInitialize");
 
         const EGLint config_attr[] = {
             EGL_RENDERABLE_TYPE, EGL_OPENGL_ES_BIT,
