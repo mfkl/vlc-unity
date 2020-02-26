@@ -21,7 +21,7 @@ bool RenderAPI_OpenEGL::make_current(void* data, bool current)
     if (current)
         ret = eglMakeCurrent(that->m_display, that->m_surface, that->m_surface, that->m_context);
     else
-       ret = eglMakeCurrent(that->m_display, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT);
+        ret = eglMakeCurrent(that->m_display, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT);
     if (ret ==  EGL_TRUE)
         return true;
     EGLint errcode = eglGetError();
