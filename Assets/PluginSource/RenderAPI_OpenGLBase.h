@@ -47,6 +47,8 @@ private:
     std::mutex text_lock;
     unsigned width = 0;
     unsigned height = 0;
+    void (*m_ReportSize)(void *ReportOpaque, unsigned width, unsigned height) = nullptr;
+    void *m_reportOpaque = nullptr;
     GLuint tex[3];
     GLuint fbo[3];
     size_t idx_render = 0;

@@ -14,6 +14,7 @@ RenderAPI_OpenEGL::RenderAPI_OpenEGL(UnityGfxRenderer apiType) :
 
 bool RenderAPI_OpenEGL::make_current(void* data, bool current)
 {
+    DEBUG("[EGL] make current");
     RenderAPI_OpenEGL* that = reinterpret_cast<RenderAPI_OpenEGL*>(data);
     //DEBUG("[EGL] make current %s disp=%p surf=%p ctx=%p", current ? "yes": "no", that->m_display, that->m_surface, that->m_context);
     EGLBoolean ret;
@@ -37,12 +38,10 @@ void* RenderAPI_OpenEGL::get_proc_address(void* /*data*/, const char* procname)
 
 void RenderAPI_OpenEGL::setVlcContext(libvlc_media_player_t *mp)
 {
-    DEBUG("[EGL] setVlcContext %p", this);
-    libvlc_video_set_output_callbacks(mp,
-        libvlc_video_engine_gles2,
-        setup, cleanup, resize, update_output, swap, 
-        make_current, get_proc_address, frameMetadata,
-        output_select_plane, this);
+    DEBUG("[EGL] subscribing to opengl output callbacks %p", this);
+    libvlc_video_set_output_callbacks(mp, libvlc_video_engine_gles2,
+        setup, cleanup, nullptr, update_output, swap, 
+        make_current, get_proc_address, nullptr, nullptr, this);
 }
 
 EGLContext current_ctx;
@@ -89,7 +88,6 @@ void RenderAPI_OpenEGL::ProcessDeviceEvent(UnityGfxDeviceEventType type, IUnityI
         }
 
         if(current_ctx == NULL){
-            DEBUG("[EGL] current_ctx is NULL");
             current_ctx = eglGetCurrentContext();
             if(current_ctx == NULL) {
                 DEBUG("[EGL] eglGetCurrentContext failed, current_ctx still NULL, error %x", eglGetError());
@@ -117,7 +115,6 @@ void RenderAPI_OpenEGL::ProcessDeviceEvent(UnityGfxDeviceEventType type, IUnityI
             DEBUG("[EGL] eglCreatePbufferSurface() returned error %x", eglGetError());
             return;
         }
-
 
         m_context = eglCreateContext(m_display, config,  current_ctx, ctx_attr);
         if ( m_context == EGL_NO_CONTEXT ||  eglGetError() != EGL_SUCCESS ) {

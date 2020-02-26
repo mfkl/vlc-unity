@@ -169,6 +169,11 @@ static void UNITY_INTERFACE_API OnGraphicsDeviceEvent(UnityGfxDeviceEventType ev
         DEBUG("CreateRenderAPI(s_DeviceType) \n");
 
         EarlyRenderAPI = CreateRenderAPI(s_DeviceType);
+        if(EarlyRenderAPI == NULL) {
+            DEBUG("EarlyRenderAPI is NULL \n");
+            return;
+        }
+        DEBUG("EarlyRenderAPI->ProcessDeviceEvent \n");
 
         EarlyRenderAPI->ProcessDeviceEvent(kUnityGfxDeviceEventInitialize, s_UnityInterfaces);        
 
