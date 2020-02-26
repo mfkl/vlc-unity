@@ -52,7 +52,7 @@ void RenderAPI_OpenEGL::ProcessDeviceEvent(UnityGfxDeviceEventType type, IUnityI
         DEBUG("[EGL] Entering ProcessDeviceEvent with kUnityGfxDeviceEventInitialize");
 
         const EGLint config_attr[] = {
-            EGL_RENDERABLE_TYPE, EGL_OPENGL_ES_BIT,
+            EGL_RENDERABLE_TYPE, EGL_OPENGL_ES2_BIT,
             EGL_SURFACE_TYPE, EGL_WINDOW_BIT | EGL_PBUFFER_BIT,
             EGL_RED_SIZE,   8,
             EGL_GREEN_SIZE, 8,
