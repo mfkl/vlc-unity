@@ -63,15 +63,16 @@ bool RenderAPI_OpenGLBase::update_output(void* opaque, const libvlc_video_render
 
         DEBUG("FB Texture 2D");
         glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, that->tex[i], 0);
+
+        GLenum status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
+
+        if (status != GL_FRAMEBUFFER_COMPLETE) {
+            DEBUG("failed to create the FBO");
+            return false;
+        }
     }
+    
     glBindTexture(GL_TEXTURE_2D, 0);
-
-    GLenum status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
-
-    if (status != GL_FRAMEBUFFER_COMPLETE) {
-        DEBUG("failed to create the FBO");
-        return false;
-    }
 
     that->width = cfg->width;
     that->height = cfg->height;
