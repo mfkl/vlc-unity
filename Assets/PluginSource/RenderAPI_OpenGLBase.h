@@ -31,11 +31,8 @@ public:
 
     static bool setup(void **opaque, const libvlc_video_setup_device_cfg_t *cfg, libvlc_video_setup_device_info_t *out);
     static void cleanup(void* opaque);
-    static void resize(void *opaque, void (*report_size_change)(void *report_opaque, unsigned width, unsigned height), void *report_opaque);
-    static bool update_output(void* opaque, const libvlc_video_render_cfg_t *cfg, libvlc_video_output_cfg_t *output);
+    static bool resize(void* opaque, const libvlc_video_render_cfg_t *cfg, libvlc_video_output_cfg_t *output);
     static void swap(void* opaque);
-    static void frameMetadata(void* opaque, libvlc_video_metadata_type_t type, const void *metadata);
-    static bool output_select_plane(void *opaque, size_t plane);
 
 	virtual void ProcessDeviceEvent(UnityGfxDeviceEventType type, IUnityInterfaces* interfaces) override = 0;
 
@@ -47,8 +44,6 @@ private:
     std::mutex text_lock;
     unsigned width = 0;
     unsigned height = 0;
-    void (*m_ReportSize)(void *ReportOpaque, unsigned width, unsigned height) = nullptr;
-    void *m_reportOpaque = nullptr;
     GLuint tex[3];
     GLuint fbo[3];
     size_t idx_render = 0;

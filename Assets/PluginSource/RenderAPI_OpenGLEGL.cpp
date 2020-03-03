@@ -40,7 +40,7 @@ void RenderAPI_OpenEGL::setVlcContext(libvlc_media_player_t *mp)
 {
     DEBUG("[EGL] subscribing to opengl output callbacks %p", this);
     libvlc_video_set_output_callbacks(mp, libvlc_video_engine_gles2,
-        setup, cleanup, nullptr, update_output, swap, 
+        setup, cleanup, nullptr, resize, swap, 
         make_current, get_proc_address, nullptr, nullptr, this);
 }
 

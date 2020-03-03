@@ -41,7 +41,7 @@ void RenderAPI_OpenGLBase::cleanup(void* opaque)
     glDeleteFramebuffers(3, that->fbo);
 }
 
-bool RenderAPI_OpenGLBase::update_output(void* opaque, const libvlc_video_render_cfg_t *cfg, libvlc_video_output_cfg_t *output)
+bool RenderAPI_OpenGLBase::resize(void* opaque, const libvlc_video_render_cfg_t *cfg, libvlc_video_output_cfg_t *output)
 {
     RenderAPI_OpenGLBase* that = reinterpret_cast<RenderAPI_OpenGLBase*>(opaque);
     if (cfg->width != that->width || cfg->height != that->height)
