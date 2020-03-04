@@ -11,9 +11,10 @@ typedef void (*JNI_OnUnload_pf)(JavaVM *, void*);
 // extern "C" int VLCJNI_OnLoad(JavaVM *, JNIEnv*);
 // extern "C" void VLCJNI_OnUnload(JavaVM *, JNIEnv *);
 
-
 jint JNI_OnLoad(JavaVM* vm, void* reserved)
 {
+    DEBUG("ENTERED RENDERAPI_ANDROID.CPP -> JNI_ONLOAD");
+
     //if (vm->GetEnv(reinterpret_cast<void**>(&jni_env), JNI_VERSION_1_6) != JNI_OK) {
     //    return -1;
     //}
@@ -25,12 +26,14 @@ jint JNI_OnLoad(JavaVM* vm, void* reserved)
     //     return -1;
     // }
 
-    handle = dlopen("libvlcjni.so", RTLD_LAZY);
+    handle = dlopen("libvlc.so", RTLD_LAZY);
     if (!handle)
     {
-        DEBUG("could not link libvlcjni.so");
+        DEBUG("could not link libvlc.so");
         return -1;
     }
+
+    DEBUG("(JNI_OnLoad_pf) dlsym(handle, JNI_OnLoad);");
 
     JNI_OnLoad_pf load;
     load = (JNI_OnLoad_pf) dlsym(handle, "JNI_OnLoad");
@@ -43,7 +46,10 @@ jint JNI_OnLoad(JavaVM* vm, void* reserved)
         return -1;
     }
 
+
     DEBUG("[Android] initialize jni env %p", jni_env);
+    DEBUG("Exiting...");
+
     return JNI_VERSION_1_6;
 }
 
@@ -78,7 +84,7 @@ public:
 private:
     jobject createWindowSurface();
     void destroyWindowSurface(jobject);
-    jobject m_awindow = nullptr;
+    // jobject m_awindow = nullptr;
 };
 
 RenderAPI* CreateRenderAPI_Android(UnityGfxRenderer apiType)
@@ -94,37 +100,44 @@ RenderAPI_Android::RenderAPI_Android(UnityGfxRenderer apiType) :
 
 RenderAPI_Android::~RenderAPI_Android()
 {
-    if (m_awindow)
-        destroyWindowSurface(m_awindow);
+    // if (m_awindow)
+    //     destroyWindowSurface(m_awindow);
 }
 
 jobject RenderAPI_Android::createWindowSurface()
 {
-    jclass cls_JavaClass = jni_env->FindClass("org/videolan/libvlc/AWindow");
-    // find constructor method
-    jmethodID mid_JavaClass = jni_env->GetMethodID (cls_JavaClass, "<init>", "(Lorg/videolan/libvlc/AWindow$SurfaceCallback;)V");
-    // create object instance
-    jobject obj_JavaClass = jni_env->NewObject(cls_JavaClass, mid_JavaClass, nullptr);
-    // return object with a global reference
-    return jni_env->NewGlobalRef(obj_JavaClass);
+    // DEBUG("Entering createWindowSurface");
+
+    // jclass cls_JavaClass = jni_env->FindClass("org/videolan/libvlc/AWindow");
+    // // find constructor method
+    // jmethodID mid_JavaClass = jni_env->GetMethodID (cls_JavaClass, "<init>", "(Lorg/videolan/libvlc/AWindow$SurfaceCallback;)V");
+    // // create object instance
+    // DEBUG("Calling jni_env->NewObject(cls_JavaClass, mid_JavaClass, nullptr)...");
+
+    // jobject obj_JavaClass = jni_env->NewObject(cls_JavaClass, mid_JavaClass, nullptr);
+    // // return object with a global reference
+
+    // DEBUG("Calling jni_env->NewGlobalRef(obj_JavaClass)");
+
+    // return jni_env->NewGlobalRef(obj_JavaClass);
 }
 
 void RenderAPI_Android::destroyWindowSurface(jobject obj)
 {
-    if (obj != nullptr)
-        jni_env->DeleteGlobalRef(obj);
+    // if (obj != nullptr)
+    //     jni_env->DeleteGlobalRef(obj);
 }
 
 void RenderAPI_Android::setVlcContext(libvlc_media_player_t *mp)
 {
-    DEBUG("[Android] setVlcContext %p", this);
-    if (m_awindow == nullptr)
-        m_awindow = createWindowSurface();
+    // DEBUG("[Android] setVlcContext %p", this);
+    // if (m_awindow == nullptr)
+    //     m_awindow = createWindowSurface();
 
-    if (m_awindow != nullptr)
-        libvlc_media_player_set_android_context(mp, m_awindow);
-    else
-        DEBUG("[Android] can't create window surface for media codec");
+    // if (m_awindow != nullptr)
+    //     libvlc_media_player_set_android_context(mp, m_awindow);
+    // else
+    //     DEBUG("[Android] can't create window surface for media codec");
 
     RenderAPI_OpenEGL::setVlcContext(mp);
 }
