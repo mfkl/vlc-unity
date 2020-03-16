@@ -57,7 +57,12 @@ public class UseRenderingPlugin : MonoBehaviour
 
             if(_mediaPlayer.Media == null)
             {
-                _mediaPlayer.Media = new Media(_libVLC, "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4", FromType.FromLocation);
+                var media = new Media(_libVLC, 
+                    "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+                    FromType.FromLocation);
+
+                media.AddOption(":no-hw-dec");
+                _mediaPlayer.Media = media;
             }
 
             _mediaPlayer.Play();
