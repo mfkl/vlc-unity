@@ -14,7 +14,7 @@ public class UseRenderingPlugin : MonoBehaviour
     {
         Core.Initialize(Application.dataPath);
 
-        _libVLC = new LibVLC("--no-osd","--verbose=2", "--no-audio");
+        _libVLC = new LibVLC("--no-osd","--verbose=2", "--no-audio", "--no-mediacodec");
 
         _mediaPlayer = new MediaPlayer(_libVLC);
 
@@ -61,7 +61,6 @@ public class UseRenderingPlugin : MonoBehaviour
                     "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
                     FromType.FromLocation);
 
-                media.AddOption(":no-hw-dec");
                 _mediaPlayer.Media = media;
             }
 
