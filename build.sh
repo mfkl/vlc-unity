@@ -50,7 +50,7 @@ echo "Building for OS '$PLATFORM' with target arch '$ARCH'"
 OUTPUT="../VLC-Unity-Windows/Plugins/$ARCH"
 
 ## ANDROID
-cd Assets/PluginSource/jni && /opt/android-ndk-r21/ndk-build
+cd Assets/PluginSource/jni && /opt/android-ndk-r21/ndk-build NDK_DEBUG=1
 cd ..
 mv ./libs/armeabi-v7a/libVLCUnityPlugin.so ../VLC-Unity-Windows/Plugins/Android/armeabi-v7a/libVLCUnityPlugin.so
 rm -rf libs
