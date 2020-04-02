@@ -19,9 +19,16 @@ bool RenderAPI_OpenEGL::make_current(void* data, bool current)
     //DEBUG("[EGL] make current %s disp=%p surf=%p ctx=%p", current ? "yes": "no", that->m_display, that->m_surface, that->m_context);
     EGLBoolean ret;
     if (current)
+    {
+        assert(eglGetCurrentContext() == EGL_NO_CONTEXT);
         ret = eglMakeCurrent(that->m_display, that->m_surface, that->m_surface, that->m_context);
+    }
     else
+    {
+         assert(eglGetCurrentContext() == that->m_context);
+        // glClearColor(1, 0, 0, 1);
         ret = eglMakeCurrent(that->m_display, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT);
+    }
     if (ret ==  EGL_TRUE)
         return true;
     EGLint errcode = eglGetError();
