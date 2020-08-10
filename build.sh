@@ -49,5 +49,21 @@ echo "Building for OS '$PLATFORM' with target arch '$ARCH'"
 
 OUTPUT="../Assets/VLCUnity/Plugins/$ARCH"
 
-cd PluginSource && make clean && make PLATFORM=$PLATFORM ARCH=$ARCH
-mv VLCUnityPlugin.{dll,pdb} $OUTPUT -f
+if [ "$PLATFORM" = "android" ]; then
+    cd PluginSource
+    if [ ! -d "include" ]; then
+        wget -O headers.zip https://code.videolan.org/videolan/vlc/-/archive/master/vlc-master.zip?path=include
+        unzip headers.zip
+        mv vlc-master-include/include/ .
+        rm -rf vlc-master-include headers.zip
+    fi
+    cd jni
+    /sdk/android-ndk-r21/ndk-build NDK_DEBUG=1
+    cd ../..
+    mv -f PluginSource/libs/armeabi-v7a/libVLCUnityPlugin.so Assets/VLCUnity/Plugins/Android/armeabi-v7a/
+    rm -rf PluginSource/libs PluginSource/obj
+else
+    cd PluginSource && make clean && make PLATFORM=$PLATFORM ARCH=$ARCH
+    mv VLCUnityPlugin.{dll,pdb} $OUTPUT -f
+fi
+

@@ -1,0 +1,40 @@
+LOCAL_PATH := $(call my-dir)
+SRC_DIR := ../
+ROOT_DIR := $(SRC_DIR)/../
+LIB_DIR := Assets/VLCUnity/Plugins/Android
+ARMV7 := armeabi-v7a
+
+include $(CLEAR_VARS)
+
+LOCAL_MODULE := LibVLC
+LOCAL_EXPORT_C_INCLUDES := $(SRC_DIR)/include
+# TODO: Make it work with all ABIs
+LOCAL_SRC_FILES := $(ROOT_DIR)/$(LIB_DIR)/$(ARMV7)/libvlc.so
+
+include $(PREBUILT_SHARED_LIBRARY)
+
+include $(CLEAR_VARS)
+
+LOCAL_MODULE := VLCUnityPlugin
+
+LOCAL_SHARED_LIBRARIES := LibVLC 
+
+
+LOCAL_LDLIBS := -llog
+LOCAL_ARM_MODE := arm
+
+LOCAL_SRC_FILES += $(SRC_DIR)/RenderAPI.cpp
+LOCAL_SRC_FILES += $(SRC_DIR)/RenderingPlugin.cpp
+LOCAL_SRC_FILES += $(SRC_DIR)/RenderAPI_Android.cpp
+LOCAL_SRC_FILES += $(SRC_DIR)/Log.cpp
+
+# LibVLC
+
+# OpenGL ES
+LOCAL_SRC_FILES += $(SRC_DIR)/RenderAPI_OpenGLBase.cpp
+LOCAL_SRC_FILES += $(SRC_DIR)/RenderAPI_OpenGLEGL.cpp
+LOCAL_LDLIBS += -L$(ROOT_DIR)/$(LIB_DIR)/$(ARMV7) -lGLESv2 -lEGL -lvlc
+LOCAL_CPPFLAGS += -DSUPPORT_OPENGL_ES=1 -DUNITY_ANDROID=1
+
+# build
+include $(BUILD_SHARED_LIBRARY)
