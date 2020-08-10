@@ -5,12 +5,45 @@ stages:
 variables:
     VLC_UWP_LLVM_IMAGE: registry.videolan.org/vlc-debian-llvm-uwp:20200706065223
     VLC_WIN_LLVM_IMAGE: registry.videolan.org/vlc-debian-llvm-mingw:20200703084018
+    VLC_ANDROID_IMAGE: registry.videolan.org/vlc-debian-android:20190717134531
 
-.win-common:
+.base-template:
     tags:
         - docker
         - amd64
     stage: build
+    artifacts:
+        paths:
+            - nightlies/*
+        expire_in: 2 weeks
+
+# Android
+
+.variables-android-arm: &variables-android-arm
+        ANDROID_ARCH: arm
+        TRIPLET: arm-linux-androideabi
+
+.android-common:
+    extends: .base-template
+    image:
+        name: $VLC_ANDROID_IMAGE
+    script: |
+        git clone https://code.videolan.org/videolan/vlc/ && cd vlc
+        wget https://code.videolan.org/videolan/vlc-android/raw/0daaf5f3a08b5c52b4caaf526633cca7061d04c2/compile-libvlc.sh
+        if [ -n "$VLC_PREBUILT_CONTRIBS_URL" ]; then
+            /bin/sh ./compile-libvlc.sh -a $ANDROID_ARCH --with-prebuilt-contribs
+        else
+            /bin/sh ./compile-libvlc.sh -a $ANDROID_ARCH --package-contribs
+        fi
+
+android-arm:
+    extends: .android-common
+    variables: *variables-android-arm
+        
+# Windows
+
+.win-common:
+    extends: .base-template
     script:
         - git clone https://code.videolan.org/videolan/vlc/ && cd vlc && extras/package/win32/build.sh $ARGS 
     after_script:
@@ -20,21 +53,15 @@ variables:
         - ls vlc-4.0.0-dev
         - 7z a -t7z -m0=lzma -mx=9 -mfb=64 -md=32m -ms=on $ARTIFACT $OUTPUT
         - cp $ARTIFACT ../../nightlies
-    artifacts:
-        paths:
-            - nightlies/*
-        expire_in: 2 weeks
     variables:
         WINE_SDK_PATH: /usr/include/wine/wine/windows/
         OUTPUT: ./vlc-4.0.0-dev
 
 .build-plugin-base:
+    extends: .base-template
     image: registry.videolan.org/vlc-debian-llvm-mingw:20200703084018
     dependencies: 
         - libvlc-x86_64
-    tags:
-        - docker
-        - amd64
     stage: build-unity-plugin
     script:
         - 7z x ./nightlies/vlc-4.0.0-dev-win64.7z -o./build
@@ -45,10 +72,6 @@ variables:
         - ./build.sh
     after_script:
         - cp Assets/VLCUnity/Plugins/x86_64/VLCUnityPlugin.dll nightlies
-    artifacts:
-        paths:
-            - nightlies/*
-        expire_in: 2 weeks
 
 libvlc-x86_64-debug:
     extends: .win-common
@@ -87,10 +110,7 @@ libvlc-uwp64-llvm-debug:
         BUILD_FOLDER: win64-uwp
             
 libvlcsharp-unity:
-    tags:
-        - docker
-        - amd64
-    stage: build
+    extends: .base-template
     script:
         - wget https://download.visualstudio.microsoft.com/download/pr/0c795076-b679-457e-8267-f9dd20a8ca28/02446ea777b6f5a5478cd3244d8ed65b/dotnet-sdk-3.1.300-linux-x64.tar.gz
         - mkdir -p $HOME/dotnet && tar zxf dotnet-sdk-3.1.300-linux-x64.tar.gz -C $HOME/dotnet
@@ -105,10 +125,6 @@ libvlcsharp-unity:
     after_script:
         - mkdir nightlies
         - cp tmp/lvs/src/LibVLCSharp/bin/Release/netstandard2.0/LibVLCSharp.dll nightlies
-    artifacts:
-        paths:
-            - nightlies/*
-        expire_in: 2 weeks
 
 unity-plugin-windows:
     extends: .build-plugin-base
