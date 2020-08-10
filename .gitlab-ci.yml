@@ -3,9 +3,8 @@ stages:
     - build-unity-plugin
 
 variables:
-    VLC_UWP_LLVM_IMAGE: registry.videolan.org/vlc-debian-llvm-uwp:20211020111246
-    VLC_WIN_LLVM_IMAGE: registry.videolan.org/vlc-debian-llvm-mingw:20211020094514
-    VLC_DEBIAN_IMAGE: registry.videolan.org/vlc-debian-unstable:20210803114245
+    VLC_UWP_LLVM_IMAGE: registry.videolan.org/vlc-debian-llvm-uwp:20200706065223
+    VLC_WIN_LLVM_IMAGE: registry.videolan.org/vlc-debian-llvm-mingw:20200703084018
 
 .win-common:
     tags:
@@ -13,15 +12,11 @@ variables:
         - amd64
     stage: build
     script:
-        - git clone https://code.videolan.org/videolan/vlc/ && cd vlc 
-        - wget -O disable-activex.patch https://code.videolan.org/-/snippets/1304/raw
-        - git apply disable-activex.patch
-        - extras/package/win32/build.sh $ARGS 
+        - git clone https://code.videolan.org/videolan/vlc/ && cd vlc && extras/package/win32/build.sh $ARGS 
     after_script:
         - mkdir nightlies
-        - ls ./vlc/win64
         - cd ./vlc/$BUILD_FOLDER
-        - make package-win-strip
+        - make package-win-common
         - ls vlc-4.0.0-dev
         - 7z a -t7z -m0=lzma -mx=9 -mfb=64 -md=32m -ms=on $ARTIFACT $OUTPUT
         - cp $ARTIFACT ../../nightlies
@@ -34,8 +29,7 @@ variables:
         OUTPUT: ./vlc-4.0.0-dev
 
 .build-plugin-base:
-    image: 
-        name: $VLC_WIN_LLVM_IMAGE
+    image: registry.videolan.org/vlc-debian-llvm-mingw:20200703084018
     dependencies: 
         - libvlc-x86_64
     tags:
@@ -93,31 +87,37 @@ libvlc-uwp64-llvm-debug:
         BUILD_FOLDER: win64-uwp
             
 libvlcsharp-unity:
-    image:
-        name: $VLC_DEBIAN_IMAGE
     tags:
         - docker
         - amd64
     stage: build
     script:
-        - wget https://download.visualstudio.microsoft.com/download/pr/17b6759f-1af0-41bc-ab12-209ba0377779/e8d02195dbf1434b940e0f05ae086453/dotnet-sdk-6.0.100-linux-x64.tar.gz
-        - mkdir -p $HOME/dotnet && tar zxf dotnet-sdk-6.0.100-linux-x64.tar.gz -C $HOME/dotnet
+        - wget https://download.visualstudio.microsoft.com/download/pr/0c795076-b679-457e-8267-f9dd20a8ca28/02446ea777b6f5a5478cd3244d8ed65b/dotnet-sdk-3.1.300-linux-x64.tar.gz
+        - mkdir -p $HOME/dotnet && tar zxf dotnet-sdk-3.1.300-linux-x64.tar.gz -C $HOME/dotnet
         - export DOTNET_ROOT=$HOME/dotnet
         - export PATH=$PATH:$HOME/dotnet
         - dotnet --version
         - mkdir tmp && cd tmp && git clone https://code.videolan.org/videolan/LibVLCSharp lvs
         - cd lvs
         - git checkout -f master
-        - dotnet publish src/LibVLCSharp/LibVLCSharp.csproj /p:UNITY=true -c Release
+        - git apply buildsystem/linux.patch
+        - dotnet build src/LibVLCSharp/LibVLCSharp.csproj /p:UNITY=true -c Release
     after_script:
         - mkdir nightlies
-        - cp -r tmp/lvs/src/LibVLCSharp/bin/Release/netstandard2.0/publish nightlies
+        - cp tmp/lvs/src/LibVLCSharp/bin/Release/netstandard2.0/LibVLCSharp.dll nightlies
     artifacts:
         paths:
             - nightlies/*
         expire_in: 2 weeks
 
 unity-plugin-windows:
+    extends: .build-plugin-base
+
+unity-plugin-windows-trial:
+    extends: .build-plugin-base
+    before_script:
+        - wget -O trial.patch https://code.videolan.org/snippets/1250/raw
+        - git apply trial.patch
     extends: .build-plugin-base
 
 unity-plugin-windows-trial:
