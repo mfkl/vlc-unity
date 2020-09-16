@@ -85,6 +85,15 @@ libvlc-uwp64-llvm-debug:
         ARGS: -w -u -c -z -d -x -a x86_64
         ARTIFACT: vlc-4.0.0-dev-win64-debug.7z
         BUILD_FOLDER: win64-uwp
+
+libvlc-uwp64-llvm-debug:
+    extends: .win-common
+    image:
+        name: $VLC_UWP_LLVM_IMAGE
+    variables:
+        ARGS: -w -u -c -z -d -x -a aarch64
+        ARTIFACT: vlc-4.0.0-dev-aarch64-debug.7z
+        BUILD_FOLDER: aarch64-uwp
             
 libvlcsharp-unity:
     tags:
