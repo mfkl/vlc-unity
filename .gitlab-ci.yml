@@ -29,14 +29,16 @@ variables:
     image:
         name: $VLC_ANDROID_IMAGE
     script: |
-        git clone https://code.videolan.org/videolan/vlc-android && cd vlc-android
         git clone https://code.videolan.org/videolan/vlc/ --depth=1
-        ./buildsystem/compile.sh -l -b -a ${ANDROID_ARCH}
+        cd vlc
+        wget https://code.videolan.org/videolan/vlc-android/raw/fd4d934ad31d37f3eeaa834214ca16eb0d4ecb6a/buildsystem/compile-libvlc.sh
+        /bin/sh ./compile-libvlc.sh -a $ANDROID_ARCH --package-contribs
+        ls build-android-arm-linux-androideabi
     after_script:
-        - mkdir nightlies
-        - cp vlc-android/vlc/build-android-arm-linux-androideabi/ndk/libs/armeabi-v7a/*.so nightlies
-        - cp vlc-android/libvlc/jni/libs/armeabi-v7a/libvlcjni.so nightlies
-        - cp vlc-android/libvlc/build/intermediates/aar_main_jar/dev/classes.jar nightlies
+        # - mkdir nightlies
+        # - cp vlc-android/vlc/build-android-arm-linux-androideabi/ndk/libs/armeabi-v7a/*.so nightlies
+        # - cp vlc-android/libvlc/jni/libs/armeabi-v7a/libvlcjni.so nightlies
+        # - cp vlc-android/libvlc/build/intermediates/aar_main_jar/dev/classes.jar nightlies
 
 libvlc-android-arm:
     extends: .android-common
@@ -111,72 +113,72 @@ unity-plugin-android:
             - nightlies/*
         expire_in: 2 weeks
 
-libvlc-x86_64-debug:
-    extends: .win-common
-    image: 
-        name: $VLC_WIN_LLVM_IMAGE
-    variables:
-        ARGS: -c -z -d -x -a x86_64
-        ARTIFACT: vlc-4.0.0-dev-win64-debug.7z
-        BUILD_FOLDER: win64
+# libvlc-x86_64-debug:
+#     extends: .win-common
+#     image: 
+#         name: $VLC_WIN_LLVM_IMAGE
+#     variables:
+#         ARGS: -c -z -d -x -a x86_64
+#         ARTIFACT: vlc-4.0.0-dev-win64-debug.7z
+#         BUILD_FOLDER: win64
         
-libvlc-x86_64:
-    extends: .win-common
-    image: 
-        name: $VLC_WIN_LLVM_IMAGE
-    variables:
-        ARGS: -c -z -r -x -a x86_64 -i nope
-        ARTIFACT: vlc-4.0.0-dev-win64.7z
-        BUILD_FOLDER: win64
+# libvlc-x86_64:
+#     extends: .win-common
+#     image: 
+#         name: $VLC_WIN_LLVM_IMAGE
+#     variables:
+#         ARGS: -c -z -r -x -a x86_64 -i nope
+#         ARTIFACT: vlc-4.0.0-dev-win64.7z
+#         BUILD_FOLDER: win64
 
-libvlc-uwp64-llvm:
-    extends: .win-common
-    image:
-        name: $VLC_UWP_LLVM_IMAGE
-    variables:
-        ARGS: -w -u -c -z -r -x -a x86_64 -i nope
-        ARTIFACT: vlc-4.0.0-dev-win64.7z
-        BUILD_FOLDER: win64-uwp
+# libvlc-uwp64-llvm:
+#     extends: .win-common
+#     image:
+#         name: $VLC_UWP_LLVM_IMAGE
+#     variables:
+#         ARGS: -w -u -c -z -r -x -a x86_64 -i nope
+#         ARTIFACT: vlc-4.0.0-dev-win64.7z
+#         BUILD_FOLDER: win64-uwp
 
-libvlc-uwp64-llvm-debug:
-    extends: .win-common
-    image:
-        name: $VLC_UWP_LLVM_IMAGE
-    variables:
-        ARGS: -w -u -c -z -d -x -a x86_64
-        ARTIFACT: vlc-4.0.0-dev-win64-debug.7z
-        BUILD_FOLDER: win64-uwp
+# libvlc-uwp64-llvm-debug:
+#     extends: .win-common
+#     image:
+#         name: $VLC_UWP_LLVM_IMAGE
+#     variables:
+#         ARGS: -w -u -c -z -d -x -a x86_64
+#         ARTIFACT: vlc-4.0.0-dev-win64-debug.7z
+#         BUILD_FOLDER: win64-uwp
             
-libvlcsharp-unity:
-    image:
-        name: $VLC_DEBIAN_IMAGE
-    tags:
-        - docker
-        - amd64
-    stage: build
-    script:
-        - wget https://download.visualstudio.microsoft.com/download/pr/17b6759f-1af0-41bc-ab12-209ba0377779/e8d02195dbf1434b940e0f05ae086453/dotnet-sdk-6.0.100-linux-x64.tar.gz
-        - mkdir -p $HOME/dotnet && tar zxf dotnet-sdk-6.0.100-linux-x64.tar.gz -C $HOME/dotnet
-        - export DOTNET_ROOT=$HOME/dotnet
-        - export PATH=$PATH:$HOME/dotnet
-        - dotnet --version
-        - mkdir tmp && cd tmp && git clone https://code.videolan.org/videolan/LibVLCSharp lvs
-        - cd lvs
-        - git checkout -f master
-        - dotnet publish src/LibVLCSharp/LibVLCSharp.csproj /p:UNITY=true -c Release
-    after_script:
-        - mkdir nightlies
-        - cp -r tmp/lvs/src/LibVLCSharp/bin/Release/netstandard2.0/publish nightlies
-    artifacts:
-        paths:
-            - nightlies/*
-        expire_in: 2 weeks
+# libvlcsharp-unity:
+#     image:
+#         name: $VLC_DEBIAN_IMAGE
+#     tags:
+#         - docker
+#         - amd64
+#     stage: build
+#     script:
+#         - wget https://download.visualstudio.microsoft.com/download/pr/17b6759f-1af0-41bc-ab12-209ba0377779/e8d02195dbf1434b940e0f05ae086453/dotnet-sdk-6.0.100-linux-x64.tar.gz
+#         - mkdir -p $HOME/dotnet && tar zxf dotnet-sdk-6.0.100-linux-x64.tar.gz -C $HOME/dotnet
+#         - export DOTNET_ROOT=$HOME/dotnet
+#         - export PATH=$PATH:$HOME/dotnet
+#         - dotnet --version
+#         - mkdir tmp && cd tmp && git clone https://code.videolan.org/videolan/LibVLCSharp lvs
+#         - cd lvs
+#         - git checkout -f master
+#         - dotnet publish src/LibVLCSharp/LibVLCSharp.csproj /p:UNITY=true -c Release
+#     after_script:
+#         - mkdir nightlies
+#         - cp -r tmp/lvs/src/LibVLCSharp/bin/Release/netstandard2.0/publish nightlies
+#     artifacts:
+#         paths:
+#             - nightlies/*
+#         expire_in: 2 weeks
 
-unity-plugin-windows:
-    extends: .build-plugin-base
+# unity-plugin-windows:
+#     extends: .build-plugin-base
 
-unity-plugin-windows-trial:
-    extends: .build-plugin-base
-    before_script:
-        - wget -O trial.patch https://code.videolan.org/snippets/1250/raw
-        - git apply trial.patch
+# unity-plugin-windows-trial:
+#     extends: .build-plugin-base
+#     before_script:
+#         - wget -O trial.patch https://code.videolan.org/snippets/1250/raw
+#         - git apply trial.patch
