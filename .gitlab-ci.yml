@@ -33,10 +33,9 @@ variables:
         cd vlc
         wget https://code.videolan.org/videolan/vlc-android/raw/fd4d934ad31d37f3eeaa834214ca16eb0d4ecb6a/buildsystem/compile-libvlc.sh
         /bin/sh ./compile-libvlc.sh -a $ANDROID_ARCH --package-contribs
-        ls build-android-arm-linux-androideabi
     after_script:
-        # - mkdir nightlies
-        # - cp vlc-android/vlc/build-android-arm-linux-androideabi/ndk/libs/armeabi-v7a/*.so nightlies
+        - mkdir nightlies
+        - cp build-android-arm-linux-androideabi/ndk/libs/armeabi-v7a/*.so nightlies
         # - cp vlc-android/libvlc/jni/libs/armeabi-v7a/libvlcjni.so nightlies
         # - cp vlc-android/libvlc/build/intermediates/aar_main_jar/dev/classes.jar nightlies
 
