@@ -36,7 +36,6 @@ variables:
         /bin/sh ./compile-libvlc.sh -a $ANDROID_ARCH --package-contribs
     after_script:
         - mkdir nightlies
-        - pwd
         - cp -r vlc/build-android-${TRIPLET}/ndk/libs/${ANDROID_ABI} nightlies
 
 .build-unity-plugin-base:
@@ -47,12 +46,11 @@ variables:
         - libvlc-android-arm
     stage: build-unity-plugin
     script:
-        - pwd
-        - mkdir -p Assets/VLCUnity/Plugins/Android/armeabi-v7a
-        - cp -a nightlies/. Assets/VLCUnity/Plugins/Android/armeabi-v7a
+        - mkdir -p Assets/VLCUnity/Plugins/Android
+        - cp -r nightlies/${ANDROID_ABI} Assets/VLCUnity/Plugins/Android/
         - ./build.sh -p android -a ${ANDROID_ARCH}
     after_script:
-        - cp -a Assets/VLCUnity/Plugins/Android/armeabi-v7a/. nightlies
+        - cp -r Assets/VLCUnity/Plugins/Android$/{ANDROID_ABI} nightlies
 
 libvlc-android-arm:
     extends: .libvlc-android-common
