@@ -36,7 +36,8 @@ variables:
         /bin/sh ./compile-libvlc.sh -a $ANDROID_ARCH --package-contribs
     after_script:
         - mkdir nightlies
-        - cp -r build-android-${TRIPLET}/ndk/libs/${ANDROID_ABI} nightlies
+        - pwd
+        - cp -r vlc/build-android-${TRIPLET}/ndk/libs/${ANDROID_ABI} nightlies
 
 .build-unity-plugin-base:
     extends: .base-template
