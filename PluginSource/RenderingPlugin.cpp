@@ -3,7 +3,10 @@
 #include "Log.h"
 
 #include <map>
+
+#if SUPPORT_D3D11
 #include <windows.h>
+#endif
 
 extern "C" {
 #include <stdlib.h>
@@ -29,6 +32,7 @@ static int s_color_space;
  * UNITY_INTERFACE_EXPORT and UNITY_INTERFACE_API
  */
 
+#if SUPPORT_D3D11
 extern "C" void UNITY_INTERFACE_EXPORT UNITY_INTERFACE_API SetPluginPath(char* path)
 {
     DEBUG("SetPluginPath \n");
@@ -38,6 +42,7 @@ extern "C" void UNITY_INTERFACE_EXPORT UNITY_INTERFACE_API SetPluginPath(char* p
         DEBUG("_putenv_s failed \n");
     else DEBUG("_putenv_s succeeded \n");
 }
+#endif
 
 extern "C" void UNITY_INTERFACE_EXPORT UNITY_INTERFACE_API
 libvlc_unity_set_color_space(int color_space)

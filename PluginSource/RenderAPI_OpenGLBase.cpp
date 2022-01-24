@@ -98,7 +98,7 @@ void RenderAPI_OpenGLBase::swap(void* opaque)
     glBindFramebuffer(GL_FRAMEBUFFER, that->fbo[that->idx_render]);
 }
 
-void* RenderAPI_OpenGLBase::getVideoFrame(bool* out_updated)
+void* RenderAPI_OpenGLBase::getVideoFrame(unsigned width, unsigned height, bool* out_updated)
 {
     // DEBUG("getVideoFrame");
 

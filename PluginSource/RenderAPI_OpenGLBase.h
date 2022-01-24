@@ -36,7 +36,7 @@ public:
 
 	virtual void ProcessDeviceEvent(UnityGfxDeviceEventType type, IUnityInterfaces* interfaces) override = 0;
 
-    void* getVideoFrame(bool* out_updated) override;
+    void* getVideoFrame(unsigned width, unsigned height, bool* out_updated) override;
 
 private:
 	UnityGfxRenderer m_APIType;
