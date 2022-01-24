@@ -12,6 +12,7 @@ variables:
 
 .variables-android-arm: &variables-android-arm
         ANDROID_ARCH: arm
+        ANDROID_ABI: armeabi-v7a
         TRIPLET: arm-linux-androideabi
 
 .base-template:
@@ -35,9 +36,7 @@ variables:
         /bin/sh ./compile-libvlc.sh -a $ANDROID_ARCH --package-contribs
     after_script:
         - mkdir nightlies
-        - cp build-android-arm-linux-androideabi/ndk/libs/armeabi-v7a/*.so nightlies
-        # - cp vlc-android/libvlc/jni/libs/armeabi-v7a/libvlcjni.so nightlies
-        # - cp vlc-android/libvlc/build/intermediates/aar_main_jar/dev/classes.jar nightlies
+        - cp -r build-android-${TRIPLET}/ndk/libs/${ANDROID_ABI} nightlies
 
 libvlc-android-arm:
     extends: .android-common
