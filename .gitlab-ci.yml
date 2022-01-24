@@ -25,7 +25,7 @@ variables:
             - nightlies/*
         expire_in: 2 weeks
 
-.android-common:
+.libvlc-android-common:
     extends: .base-template
     image:
         name: $VLC_ANDROID_IMAGE
@@ -43,18 +43,18 @@ variables:
     image:
         name: $VLC_ANDROID_IMAGE
     dependencies: 
-        - libvlc-android-arm
+        - libvlc-android-${ANDROID_ARCH}
     stage: build-unity-plugin
     script:
         - pwd
         - mkdir -p Assets/VLCUnity/Plugins/Android/armeabi-v7a
         - cp -a nightlies/. Assets/VLCUnity/Plugins/Android/armeabi-v7a
-        - ./build.sh -p android -a arm
+        - ./build.sh -p android -a ${ANDROID_ARCH}
     after_script:
         - cp -a Assets/VLCUnity/Plugins/Android/armeabi-v7a/. nightlies
 
 libvlc-android-arm:
-    extends: .android-common
+    extends: .libvlc-android-common
     variables: *variables-android-arm
 
 unity-plugin-android:
