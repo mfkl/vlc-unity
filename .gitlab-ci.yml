@@ -38,13 +38,6 @@ variables:
         - mkdir nightlies
         - cp -r build-android-${TRIPLET}/ndk/libs/${ANDROID_ABI} nightlies
 
-libvlc-android-arm:
-    extends: .android-common
-    variables: *variables-android-arm
-
-unity-plugin-android:
-    extends: .build-unity-plugin-base
-
 .build-unity-plugin-base:
     extends: .base-template
     image:
@@ -59,6 +52,14 @@ unity-plugin-android:
         - ./build.sh -p android -a arm
     after_script:
         - cp -a Assets/VLCUnity/Plugins/Android/armeabi-v7a/. nightlies
+
+libvlc-android-arm:
+    extends: .android-common
+    variables: *variables-android-arm
+
+unity-plugin-android:
+    extends: .build-unity-plugin-base
+    variables: *variables-android-arm
 
 # WINDOWS CLASSIC
 
