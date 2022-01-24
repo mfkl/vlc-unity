@@ -43,7 +43,7 @@ variables:
     image:
         name: $VLC_ANDROID_IMAGE
     dependencies: 
-        - libvlc-android-${ANDROID_ARCH}
+        - libvlc-android-arm
     stage: build-unity-plugin
     script:
         - pwd
