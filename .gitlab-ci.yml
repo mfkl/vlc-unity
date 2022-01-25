@@ -6,7 +6,7 @@ variables:
     VLC_UWP_LLVM_IMAGE: registry.videolan.org/vlc-debian-llvm-uwp:20211020111246
     VLC_WIN_LLVM_IMAGE: registry.videolan.org/vlc-debian-llvm-mingw:20211020094514
     VLC_DEBIAN_IMAGE: registry.videolan.org/vlc-debian-unstable:20210803114245
-    VLC_ANDROID_IMAGE: registry.videolan.org/vlc-debian-android:20210730131708
+    VLC_ANDROID_IMAGE: registry.videolan.org/vlc-debian-android:20210915065913
 
 # ANDROID
 
@@ -30,13 +30,13 @@ variables:
     image:
         name: $VLC_ANDROID_IMAGE
     script: |
+        git clone https://code.videolan.org/videolan/vlc-android && cd vlc-android
         git clone https://code.videolan.org/videolan/vlc/ --depth=1
-        cd vlc
-        wget https://code.videolan.org/videolan/vlc-android/raw/fd4d934ad31d37f3eeaa834214ca16eb0d4ecb6a/buildsystem/compile-libvlc.sh
-        /bin/sh ./compile-libvlc.sh -a $ANDROID_ARCH --package-contribs
+        ./buildsystem/compile.sh -l -b -a ${ANDROID_ARCH}
     after_script:
         - mkdir nightlies
-        - cp -r vlc/build-android-${TRIPLET}/ndk/libs/${ANDROID_ABI} nightlies
+        - cp vlc-android/vlc/build-android-${TRIPLET}/ndk/libs/${ANDROID_ABI}/*.so nightlies
+        - cp vlc-android/libvlc/build/intermediates/aar_main_jar/dev/classes.jar nightlies
 
 .build-unity-plugin-base:
     extends: .base-template
