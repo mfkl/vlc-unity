@@ -6,7 +6,12 @@ namespace LibVLCSharp
 {
     class OnLoad
     {
-        [DllImport("VLCUnityPlugin", CallingConvention = CallingConvention.Cdecl, EntryPoint = "libvlc_unity_set_color_space")]
+#if UNITY_ANDROID
+        const string UnityPlugin = "libVLCUnityPlugin";
+#else
+        const string UnityPlugin = "VLCUnityPlugin";
+#endif
+        [DllImport(UnityPlugin, CallingConvention = CallingConvention.Cdecl, EntryPoint = "libvlc_unity_set_color_space")]
         static extern void SetColorSpace(UnityColorSpace colorSpace);
 
         enum UnityColorSpace
