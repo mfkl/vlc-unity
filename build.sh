@@ -16,6 +16,7 @@ while [ $# -gt 0 ]; do
             echo "Use -p to set the PLATFORM:"
             echo "  Windows:       win"
             echo "  Android:       android"
+            echo "  UWP:           uwp"
             echo " "    
             echo "Use --release to build in release mode"
             echo " "
@@ -51,7 +52,7 @@ then
     PLATFORM=win
     ARCH=x86_64
 fi
-
+ARCH=x86_64
 echo "Building for OS '$PLATFORM' with target arch '$ARCH'"
 if [ "$TRIAL" == 1 ]; then
 echo "TRIAL version build enabled"

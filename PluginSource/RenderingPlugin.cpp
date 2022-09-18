@@ -37,7 +37,7 @@ static int s_color_space;
  * UNITY_INTERFACE_EXPORT and UNITY_INTERFACE_API
  */
 
-#if SUPPORT_D3D11
+#if SUPPORT_D3D11 && !WINDOWS_UWP
 extern "C" void UNITY_INTERFACE_EXPORT UNITY_INTERFACE_API SetPluginPath(char* path)
 {
     DEBUG("SetPluginPath \n");

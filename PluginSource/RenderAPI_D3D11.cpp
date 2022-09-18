@@ -262,7 +262,7 @@ void ReadWriteTexture::Update(UINT width, UINT height, ID3D11Device *m_d3deviceU
     if(FAILED(hr))
     {
         _com_error error(hr);
-        DEBUG("sharedResource->CreateSharedHandle FAILED %s \n", error.ErrorMessage());
+        //DEBUG("sharedResource->CreateSharedHandle FAILED %s \n", error.ErrorMessage());
     }
 
     sharedResource->Release();
@@ -273,7 +273,7 @@ void ReadWriteTexture::Update(UINT width, UINT height, ID3D11Device *m_d3deviceU
     if(FAILED(hr))
     {
         _com_error error(hr);
-        DEBUG("QueryInterface ID3D11Device1 FAILED %s \n", error.ErrorMessage());
+        // DEBUG("QueryInterface ID3D11Device1 FAILED %s \n", error.ErrorMessage());
     }
     
     ID3D11Texture2D* textureVLC;
@@ -281,7 +281,7 @@ void ReadWriteTexture::Update(UINT width, UINT height, ID3D11Device *m_d3deviceU
     if(FAILED(hr))
     {
         _com_error error(hr);
-        DEBUG("ctx->d3device->OpenSharedResource FAILED %s \n", error.ErrorMessage());
+        // DEBUG("ctx->d3device->OpenSharedResource FAILED %s \n", error.ErrorMessage());
     }
 
     d3d11VLC1->Release();
@@ -354,7 +354,7 @@ void RenderAPI_D3D11::CreateResources()
     if(FAILED(hr))
     {
         _com_error error(hr);
-        DEBUG("FAILED to create d3d11 device and context %s \n", error.ErrorMessage());
+        // DEBUG("FAILED to create d3d11 device and context %s \n", error.ErrorMessage());
     }
 
     DEBUG("Configuring multithread \n");
@@ -367,7 +367,7 @@ void RenderAPI_D3D11::CreateResources()
         pMultithread->Release();
     } else {
         _com_error error(hr);
-        DEBUG("FAILED to SetMultithreadProtected %s \n", error.ErrorMessage());
+        // DEBUG("FAILED to SetMultithreadProtected %s \n", error.ErrorMessage());
     }
 
     DEBUG("Exiting CreateResources.\n");

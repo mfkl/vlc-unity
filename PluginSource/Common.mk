@@ -4,11 +4,18 @@ SRCS = RenderingPlugin.cpp RenderAPI.cpp RenderAPI_D3D11.cpp Log.cpp
 
 OBJS = $(SRCS:.cpp=.o)
 
+ifeq ($(PLATFORM), uwp)
+CPPFLAGS = -DWINAPI_FAMILY=WINAPI_FAMILY_APP -D_UNICODE -DUNICODE -D__MSVCRT_VERSION__=0xE00 -D_WIN32_WINNT=0x0A00
+LDFLAGS = -lwindowsapp -shared -Wl,-pdb= -L$(LIB)
+CFLAGS = -Wl,-lwindowsapp
+CXXFLAGS = -Wl,-lwindowsapp -I./sdk/include/
+EXTRA_CRUNTIME = vcruntime140_app
+else
 CXXFLAGS = -O3 -g -gcodeview -fdebug-prefix-map='/mnt/c/'='c:/' -Wall -I./sdk/include/ -DNDEBUG
+LDFLAGS = -static-libgcc -static-libstdc++ -shared -Wl,-pdb= -L$(LIB)
+endif
 
 LIB=./sdk/lib/
-
-LDFLAGS = -static-libgcc -static-libstdc++ -shared -Wl,-pdb= -L$(LIB)
 
 LIBS = -lvlc -ld3d11 -ld3dcompiler_47 -ldxgi
 
@@ -25,8 +32,12 @@ CXXFLAGS += -DSHOW_WATERMARK
 endif
 
 OUTPUT = $(TARGET).dll
-WINDOWS_BINARIES = Assets/VLCUnity/Plugins/x86_64
 
+ifeq ($(PLATFORM), uwp)
+WINDOWS_BINARIES = Assets/VLCUnity/Plugins/UWP
+else
+WINDOWS_BINARIES = Assets/VLCUnity/Plugins/x86_64
+endif
 CXX = $(BIN_PREFIX)-c++
 STRIP = $(BIN_PREFIX)-strip
 
