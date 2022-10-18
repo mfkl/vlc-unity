@@ -6,10 +6,9 @@ OBJS = $(SRCS:.cpp=.o)
 
 ifeq ($(PLATFORM), uwp)
 CPPFLAGS = -DWINAPI_FAMILY=WINAPI_FAMILY_APP -D_UNICODE -DUNICODE -D__MSVCRT_VERSION__=0xE00 -D_WIN32_WINNT=0x0A00
-LDFLAGS = -lwindowsapp -shared -Wl,-pdb= -L$(LIB)
+LDFLAGS = -lwindowsapp -Wl,--no-seh -static-libgcc -static-libstdc++ -shared -Wl,-pdb= -L$(LIB)
 CFLAGS = -Wl,-lwindowsapp
 CXXFLAGS = -Wl,-lwindowsapp -I./sdk/include/
-EXTRA_CRUNTIME = vcruntime140_app
 else
 CXXFLAGS = -O3 -g -gcodeview -fdebug-prefix-map='/mnt/c/'='c:/' -Wall -I./sdk/include/ -DNDEBUG
 LDFLAGS = -static-libgcc -static-libstdc++ -shared -Wl,-pdb= -L$(LIB)
@@ -17,7 +16,7 @@ endif
 
 LIB=./sdk/lib/
 
-LIBS = -lvlc -ld3d11 -ld3dcompiler_47 -ldxgi
+LIBS = -lvlc -ld3d11 -ld3dcompiler_47 -ldxgi -lucrt
 
 ifeq ($(ARCH), x86_64)
 BIN_PREFIX = x86_64-w64-mingw32
@@ -53,7 +52,7 @@ clean:
 	rm -f $(OUTPUT) $(OBJS)
 
 $(OUTPUT): $(OBJS)
-	$(CXX) $(LDFLAGS) -o $(OUTPUT) $(OBJS) $(LIBS)
+	$(CXX) $(LDFLAGS) $(CPPFLAGS) -o $(OUTPUT) $(OBJS) $(LIBS) -v
 
 .cpp.o:
 	$(CXX) $(CXXFLAGS) -$(COMPILEFLAG) -c -o $@ $<
