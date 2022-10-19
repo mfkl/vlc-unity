@@ -4,14 +4,14 @@ SRCS = RenderingPlugin.cpp RenderAPI.cpp RenderAPI_D3D11.cpp Log.cpp
 
 OBJS = $(SRCS:.cpp=.o)
 
+LDFLAGS = -static-libgcc -static-libstdc++  -shared -Wl,-pdb= -L$(LIB)
+CLAGS = -O3 -g -gcodeview -fdebug-prefix-map='/mnt/s/'='s:/' -Wall -I./sdk/include/ -DNDEBUG
+CXXFLAGS = -O3 -g -gcodeview -fdebug-prefix-map='/mnt/s/'='s:/' -Wall -I./sdk/include/ -DNDEBUG
 ifeq ($(PLATFORM), uwp)
 CPPFLAGS = -DWINAPI_FAMILY=WINAPI_FAMILY_APP -D_UNICODE -DUNICODE -D__MSVCRT_VERSION__=0xE00 -D_WIN32_WINNT=0x0A00
-LDFLAGS = -lwindowsapp -Wl,--no-seh -static-libgcc -static-libstdc++ -shared -Wl,-pdb= -L$(LIB)
-CFLAGS = -Wl,-lwindowsapp
-CXXFLAGS = -Wl,-lwindowsapp -I./sdk/include/
-else
-CXXFLAGS = -O3 -g -gcodeview -fdebug-prefix-map='/mnt/c/'='c:/' -Wall -I./sdk/include/ -DNDEBUG
-LDFLAGS = -static-libgcc -static-libstdc++ -shared -Wl,-pdb= -L$(LIB)
+LDFLAGS += -lwindowsapp -Wl,--nxcompat -Wl,--no-seh -Wl,--dynamicbase
+CFLAGS += -Wl,-lwindowsapp $(CPPFLAGS)
+CXXFLAGS += -Wl,-lwindowsapp $(CPPFLAGS)
 endif
 
 LIB=./sdk/lib/
