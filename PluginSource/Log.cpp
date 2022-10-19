@@ -24,7 +24,7 @@ void debugmsg( const char* fmt, ...)
     char* buff = (char*)malloc(msgsize + 1);
     _vsnprintf(buff, msgsize + 1, fmt, args);
     buff[msgsize] = '\0';
-    OutputDebugString(buff);
+    // OutputDebugString(buff);
     free(buff);
 #elif UNITY_ANDROID
     __android_log_vprint(ANDROID_LOG_INFO, "VLCUnity", fmt, args);
